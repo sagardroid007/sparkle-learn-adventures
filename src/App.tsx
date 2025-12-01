@@ -10,6 +10,9 @@ import Home from "./pages/Home";
 import Courses from "./pages/Courses";
 import Quiz from "./pages/Quiz";
 import Games from "./pages/Games";
+import MatchingGame from "./pages/games/MatchingGame";
+import MemoryGame from "./pages/games/MemoryGame";
+import WordPuzzle from "./pages/games/WordPuzzle";
 import Rewards from "./pages/Rewards";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
@@ -60,6 +63,30 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Games />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/games/matching"
+                element={
+                  <ProtectedRoute>
+                    <MatchingGame />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/games/memory"
+                element={
+                  <ProtectedRoute>
+                    <MemoryGame />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/games/puzzle"
+                element={
+                  <ProtectedRoute>
+                    <WordPuzzle />
                   </ProtectedRoute>
                 }
               />

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { AIHelper } from '@/components/AIHelper';
 import { useProgress } from '@/contexts/ProgressContext';
 import { useNavigate } from 'react-router-dom';
-import { Lock, Gamepad2 } from 'lucide-react';
+import { Lock, Gamepad2, Sparkles, Trophy, Zap } from 'lucide-react';
 
 export default function Games() {
   const { hasPassedQuiz } = useProgress();
@@ -13,29 +13,38 @@ export default function Games() {
   const games = [
     {
       id: 'matching',
-      title: 'Matching Game 🎴',
+      title: 'Matching Game',
+      emoji: '🎴',
       description: 'Match pairs and test your memory!',
       color: 'from-primary to-blue-400',
       requiredCourse: 'math-adventure',
+      path: '/games/matching',
+      icon: Sparkles,
     },
     {
       id: 'memory',
-      title: 'Memory Cards 🃏',
+      title: 'Memory Cards',
+      emoji: '🃏',
       description: 'Flip cards and find matches!',
       color: 'from-secondary to-pink-400',
       requiredCourse: 'science-quest',
+      path: '/games/memory',
+      icon: Trophy,
     },
     {
       id: 'puzzle',
-      title: 'Word Puzzle 🧩',
+      title: 'Word Puzzle',
+      emoji: '🧩',
       description: 'Complete the word puzzles!',
       color: 'from-accent to-orange-400',
       requiredCourse: 'english-fun',
+      path: '/games/puzzle',
+      icon: Zap,
     },
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-b from-background via-primary/5 to-secondary/5">
       <Navbar />
       
       <div className="pt-24 pb-12 px-4">
@@ -45,34 +54,78 @@ export default function Games() {
             animate={{ y: 0, opacity: 1 }}
             className="text-center mb-12"
           >
-            <h1 className="text-6xl font-black text-primary mb-4">
-              Fun Games! 🎮
-            </h1>
+            <motion.div
+              animate={{ rotate: [0, -5, 5, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="inline-block"
+            >
+              <h1 className="text-6xl font-black text-primary mb-4">
+                Fun Games! 🎮
+              </h1>
+            </motion.div>
             <p className="text-2xl text-muted-foreground font-bold">
-              Complete quizzes to unlock games!
+              Complete quizzes to unlock awesome games!
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {games.map((game, index) => {
               const isLocked = !hasPassedQuiz(game.requiredCourse);
+              const Icon = game.icon;
               
               return (
                 <motion.div
                   key={game.id}
                   initial={{ y: 100, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ scale: isLocked ? 1 : 1.05 }}
-                  className="relative"
+                  transition={{ delay: index * 0.15 }}
+                  whileHover={{ scale: isLocked ? 1 : 1.05, rotate: isLocked ? 0 : 2 }}
+                  className="relative group"
                 >
-                  <div className={`bg-gradient-to-br ${game.color} rounded-3xl p-8 shadow-2xl border-4 border-background ${isLocked ? 'opacity-50' : ''}`}>
-                    <div className="text-center">
-                      <div className="text-7xl mb-4">
-                        {isLocked ? <Lock className="w-20 h-20 mx-auto text-background" /> : <Gamepad2 className="w-20 h-20 mx-auto text-background" />}
+                  {/* Glow effect */}
+                  {!isLocked && (
+                    <motion.div
+                      className={`absolute -inset-2 bg-gradient-to-r ${game.color} rounded-[2rem] opacity-0 group-hover:opacity-50 blur-xl transition-opacity duration-500`}
+                      animate={{ scale: [1, 1.05, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    />
+                  )}
+                  
+                  <div className={`relative bg-gradient-to-br ${game.color} rounded-3xl p-8 shadow-2xl border-4 border-background overflow-hidden ${isLocked ? 'opacity-60 grayscale' : ''}`}>
+                    {/* Animated background pattern */}
+                    {!isLocked && (
+                      <div className="absolute inset-0 opacity-20">
+                        <motion.div
+                          className="absolute top-0 left-0 w-32 h-32 bg-background rounded-full"
+                          animate={{ x: [0, 100, 0], y: [0, 50, 0] }}
+                          transition={{ duration: 8, repeat: Infinity }}
+                        />
+                        <motion.div
+                          className="absolute bottom-0 right-0 w-24 h-24 bg-background rounded-full"
+                          animate={{ x: [0, -80, 0], y: [0, -40, 0] }}
+                          transition={{ duration: 6, repeat: Infinity }}
+                        />
                       </div>
+                    )}
+                    
+                    <div className="relative text-center">
+                      <motion.div 
+                        className="text-8xl mb-4"
+                        animate={!isLocked ? { 
+                          y: [0, -10, 0],
+                          rotate: [0, 5, -5, 0]
+                        } : {}}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      >
+                        {isLocked ? (
+                          <Lock className="w-20 h-20 mx-auto text-background" />
+                        ) : (
+                          <span className="drop-shadow-lg">{game.emoji}</span>
+                        )}
+                      </motion.div>
                       
-                      <h3 className="text-3xl font-black mb-3 text-background">
+                      <h3 className="text-3xl font-black mb-3 text-background flex items-center justify-center gap-2">
+                        <Icon className="w-8 h-8" />
                         {game.title}
                       </h3>
                       
@@ -85,18 +138,23 @@ export default function Games() {
                           variant="outline"
                           size="lg"
                           onClick={() => navigate(`/quiz/${game.requiredCourse}`)}
-                          className="w-full bg-background hover:bg-background/90"
+                          className="w-full bg-background hover:bg-background/90 group"
                         >
-                          Complete Quiz First
+                          <Lock className="w-5 h-5 mr-2 group-hover:animate-bounce" />
+                          Take Quiz to Unlock
                         </Button>
                       ) : (
-                        <Button
-                          variant="outline"
-                          size="lg"
-                          className="w-full bg-background hover:bg-background/90"
-                        >
-                          Play Now!
-                        </Button>
+                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                          <Button
+                            variant="outline"
+                            size="lg"
+                            onClick={() => navigate(game.path)}
+                            className="w-full bg-background hover:bg-background/90 group"
+                          >
+                            <Gamepad2 className="w-5 h-5 mr-2 group-hover:animate-pulse" />
+                            Play Now!
+                          </Button>
+                        </motion.div>
                       )}
                     </div>
                   </div>
@@ -108,12 +166,16 @@ export default function Games() {
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ delay: 0.5 }}
-            className="mt-12 text-center bg-muted rounded-3xl p-8"
+            transition={{ delay: 0.5, type: 'spring' }}
+            className="mt-12 text-center bg-gradient-to-r from-muted via-primary/10 to-muted rounded-3xl p-8 border-4 border-dashed border-primary/30"
           >
-            <p className="text-2xl font-black text-foreground">
+            <motion.p 
+              className="text-2xl font-black text-foreground"
+              animate={{ scale: [1, 1.02, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
               💡 Tip: Score 60% or higher in quizzes to unlock games!
-            </p>
+            </motion.p>
           </motion.div>
         </div>
       </div>
