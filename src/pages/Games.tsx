@@ -59,16 +59,16 @@ export default function Games() {
               transition={{ duration: 2, repeat: Infinity }}
               className="inline-block"
             >
-              <h1 className="text-6xl font-black text-primary mb-4">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-primary mb-4">
                 Fun Games! 🎮
               </h1>
             </motion.div>
-            <p className="text-2xl text-muted-foreground font-bold">
+            <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground font-bold">
               Complete quizzes to unlock awesome games!
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
             {games.map((game, index) => {
               const isLocked = !hasPassedQuiz(game.requiredCourse);
               const Icon = game.icon;
@@ -91,7 +91,7 @@ export default function Games() {
                     />
                   )}
                   
-                  <div className={`relative bg-gradient-to-br ${game.color} rounded-3xl p-8 shadow-2xl border-4 border-background overflow-hidden ${isLocked ? 'opacity-60 grayscale' : ''}`}>
+                  <div className={`relative bg-gradient-to-br ${game.color} rounded-3xl p-5 sm:p-8 shadow-2xl border-4 border-background overflow-hidden ${isLocked ? 'opacity-60 grayscale' : ''}`}>
                     {/* Animated background pattern */}
                     {!isLocked && (
                       <div className="absolute inset-0 opacity-20">
@@ -107,10 +107,10 @@ export default function Games() {
                         />
                       </div>
                     )}
-                    
+
                     <div className="relative text-center">
-                      <motion.div 
-                        className="text-8xl mb-4"
+                      <motion.div
+                        className="text-6xl sm:text-8xl mb-4"
                         animate={!isLocked ? { 
                           y: [0, -10, 0],
                           rotate: [0, 5, -5, 0]
@@ -118,18 +118,18 @@ export default function Games() {
                         transition={{ duration: 2, repeat: Infinity }}
                       >
                         {isLocked ? (
-                          <Lock className="w-20 h-20 mx-auto text-background" />
+                          <Lock className="w-16 h-16 sm:w-20 sm:h-20 mx-auto text-background" />
                         ) : (
                           <span className="drop-shadow-lg">{game.emoji}</span>
                         )}
                       </motion.div>
-                      
-                      <h3 className="text-3xl font-black mb-3 text-background flex items-center justify-center gap-2">
-                        <Icon className="w-8 h-8" />
+
+                      <h3 className="text-2xl sm:text-3xl font-black mb-3 text-background flex items-center justify-center gap-2">
+                        <Icon className="w-6 h-6 sm:w-8 sm:h-8" />
                         {game.title}
                       </h3>
-                      
-                      <p className="text-xl font-bold mb-6 text-background/90">
+
+                      <p className="text-base sm:text-xl font-bold mb-4 sm:mb-6 text-background/90">
                         {game.description}
                       </p>
 
@@ -167,10 +167,10 @@ export default function Games() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.5, type: 'spring' }}
-            className="mt-12 text-center bg-gradient-to-r from-muted via-primary/10 to-muted rounded-3xl p-8 border-4 border-dashed border-primary/30"
+            className="mt-8 sm:mt-12 text-center bg-gradient-to-r from-muted via-primary/10 to-muted rounded-3xl p-5 sm:p-8 border-4 border-dashed border-primary/30"
           >
-            <motion.p 
-              className="text-2xl font-black text-foreground"
+            <motion.p
+              className="text-lg sm:text-xl md:text-2xl font-black text-foreground"
               animate={{ scale: [1, 1.02, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
