@@ -1,23 +1,50 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserCircle, Shield } from 'lucide-react';
+
+const loginSchema = z.object({
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Please enter a valid email address'),
+  password: z
+    .string()
+    .min(1, 'Password is required')
+    .min(8, 'Password must be at least 8 characters')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .regex(/[0-9]/, 'Password must contain at least one number'),
+  childAge: z.string().optional(),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [childAge, setChildAge] = useState('8');
+
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      childAge: '8',
+    },
+  });
 
   const handleLogin = (role: 'parent' | 'admin') => {
-    login(email, password, role, role === 'parent' ? parseInt(childAge) : undefined);
-    navigate('/home');
+    form.handleSubmit((data) => {
+      login(data.email, data.password, role, role === 'parent' ? parseInt(data.childAge || '8') : undefined);
+      navigate('/home');
+    })();
   };
 
   return (
@@ -27,125 +54,162 @@ export default function Login() {
         animate={{ scale: 1, opacity: 1 }}
         className="w-full max-w-md"
       >
-        <div className="text-center mb-8">
+        <div className="text-center mb-6 sm:mb-8">
           <motion.div
             animate={{ rotate: [0, 10, -10, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="inline-block text-8xl mb-4"
+            className="inline-block text-6xl sm:text-8xl mb-3 sm:mb-4"
           >
             🦉
           </motion.div>
-          <h1 className="text-5xl font-black text-primary mb-2">LearnFun</h1>
-          <p className="text-xl text-muted-foreground">Where Learning is an Adventure!</p>
+          <h1 className="text-4xl sm:text-5xl font-black text-primary mb-2">LearnFun</h1>
+          <p className="text-lg sm:text-xl text-muted-foreground">Where Learning is an Adventure!</p>
         </div>
 
-        <Tabs defaultValue="parent" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 h-14 p-1 bg-muted rounded-3xl">
-            <TabsTrigger value="parent" className="rounded-2xl text-base font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <UserCircle className="w-5 h-5 mr-2" />
-              Parent Login
-            </TabsTrigger>
-            <TabsTrigger value="admin" className="rounded-2xl text-base font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Shield className="w-5 h-5 mr-2" />
-              Admin Login
-            </TabsTrigger>
-          </TabsList>
+        <Form {...form}>
+          <Tabs defaultValue="parent" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 h-12 sm:h-14 p-1 bg-muted rounded-3xl">
+              <TabsTrigger value="parent" className="rounded-2xl text-sm sm:text-base font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <UserCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
+                <span className="hidden xs:inline">Parent</span> Login
+              </TabsTrigger>
+              <TabsTrigger value="admin" className="rounded-2xl text-sm sm:text-base font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Shield className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
+                <span className="hidden xs:inline">Admin</span> Login
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="parent">
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              className="bg-card p-8 rounded-3xl shadow-xl border-4 border-primary space-y-6"
-            >
-              <div className="space-y-2">
-                <Label htmlFor="parent-email" className="text-lg font-bold">Email</Label>
-                <Input
-                  id="parent-email"
-                  type="email"
-                  placeholder="parent@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="h-12 rounded-2xl border-2 text-base"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="parent-password" className="text-lg font-bold">Password</Label>
-                <Input
-                  id="parent-password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="h-12 rounded-2xl border-2 text-base"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="child-age" className="text-lg font-bold">Child's Age</Label>
-                <Input
-                  id="child-age"
-                  type="number"
-                  min="6"
-                  max="15"
-                  value={childAge}
-                  onChange={(e) => setChildAge(e.target.value)}
-                  className="h-12 rounded-2xl border-2 text-base"
-                />
-              </div>
-
-              <Button
-                onClick={() => handleLogin('parent')}
-                variant="default"
-                size="lg"
-                className="w-full"
+            <TabsContent value="parent">
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                className="bg-card p-5 sm:p-8 rounded-3xl shadow-xl border-4 border-primary space-y-4 sm:space-y-6"
               >
-                Login as Parent
-              </Button>
-            </motion.div>
-          </TabsContent>
-
-          <TabsContent value="admin">
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              className="bg-card p-8 rounded-3xl shadow-xl border-4 border-primary space-y-6"
-            >
-              <div className="space-y-2">
-                <Label htmlFor="admin-email" className="text-lg font-bold">Admin Email</Label>
-                <Input
-                  id="admin-email"
-                  type="email"
-                  placeholder="admin@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="h-12 rounded-2xl border-2 text-base"
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-base sm:text-lg font-bold">Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          placeholder="parent@example.com"
+                          className="h-11 sm:h-12 rounded-2xl border-2 text-base"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="admin-password" className="text-lg font-bold">Password</Label>
-                <Input
-                  id="admin-password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="h-12 rounded-2xl border-2 text-base"
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-base sm:text-lg font-bold">Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          className="h-11 sm:h-12 rounded-2xl border-2 text-base"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              <Button
-                onClick={() => handleLogin('admin')}
-                variant="default"
-                size="lg"
-                className="w-full"
+                <FormField
+                  control={form.control}
+                  name="childAge"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-base sm:text-lg font-bold">Child's Age</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min="6"
+                          max="15"
+                          className="h-11 sm:h-12 rounded-2xl border-2 text-base"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Button
+                  onClick={() => handleLogin('parent')}
+                  variant="default"
+                  size="lg"
+                  className="w-full"
+                >
+                  Login as Parent
+                </Button>
+              </motion.div>
+            </TabsContent>
+
+            <TabsContent value="admin">
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                className="bg-card p-5 sm:p-8 rounded-3xl shadow-xl border-4 border-primary space-y-4 sm:space-y-6"
               >
-                Login as Admin
-              </Button>
-            </motion.div>
-          </TabsContent>
-        </Tabs>
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-base sm:text-lg font-bold">Admin Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          placeholder="admin@example.com"
+                          className="h-11 sm:h-12 rounded-2xl border-2 text-base"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-base sm:text-lg font-bold">Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          className="h-11 sm:h-12 rounded-2xl border-2 text-base"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Button
+                  onClick={() => handleLogin('admin')}
+                  variant="default"
+                  size="lg"
+                  className="w-full"
+                >
+                  Login as Admin
+                </Button>
+              </motion.div>
+            </TabsContent>
+          </Tabs>
+        </Form>
       </motion.div>
     </div>
   );

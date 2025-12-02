@@ -38,17 +38,17 @@ export default function Dashboard() {
           <motion.div
             initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="mb-12"
+            className="mb-8 sm:mb-12"
           >
-            <h1 className="text-5xl font-black text-primary mb-2">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-primary mb-2">
               Learning Dashboard 📊
             </h1>
-            <p className="text-xl text-muted-foreground font-bold">
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground font-bold">
               Track {user?.role === 'admin' ? 'student' : 'your child\'s'} progress and achievements
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12">
             {stats.map((stat, index) => (
               <motion.div
                 key={stat.title}
@@ -57,14 +57,14 @@ export default function Dashboard() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card className={`border-4 border-primary shadow-xl bg-gradient-to-br ${stat.color} overflow-hidden`}>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg font-bold text-background flex items-center gap-2">
-                      <stat.icon className="w-5 h-5" />
-                      {stat.title}
+                  <CardHeader className="pb-2 p-3 sm:p-4">
+                    <CardTitle className="text-sm sm:text-base md:text-lg font-bold text-background flex items-center gap-1 sm:gap-2">
+                      <stat.icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <span className="truncate">{stat.title}</span>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <div className="text-5xl font-black text-background">
+                  <CardContent className="p-3 sm:p-4 pt-0 sm:pt-0">
+                    <div className="text-3xl sm:text-4xl md:text-5xl font-black text-background">
                       {stat.value}
                     </div>
                   </CardContent>
@@ -79,24 +79,24 @@ export default function Dashboard() {
             transition={{ delay: 0.4 }}
           >
             <Card className="border-4 border-primary shadow-xl">
-              <CardHeader>
-                <CardTitle className="text-3xl font-black text-foreground">
+              <CardHeader className="p-4 sm:p-6">
+                <CardTitle className="text-xl sm:text-2xl md:text-3xl font-black text-foreground">
                   Recent Quiz Performance 📈
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
                 {chartData.length > 0 ? (
-                  <ResponsiveContainer width="100%" height={300}>
+                  <ResponsiveContainer width="100%" height={250}>
                     <BarChart data={chartData}>
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis domain={[0, 100]} />
+                      <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                      <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
                       <Tooltip />
                       <Bar dataKey="score" fill="hsl(var(--primary))" radius={[10, 10, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (
-                  <div className="h-64 flex items-center justify-center text-2xl font-bold text-muted-foreground">
+                  <div className="h-48 sm:h-64 flex items-center justify-center text-lg sm:text-xl md:text-2xl font-bold text-muted-foreground text-center px-4">
                     No quiz data yet! Start learning to see progress here. 🎯
                   </div>
                 )}

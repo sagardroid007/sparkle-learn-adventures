@@ -42,10 +42,10 @@ export default function Courses() {
             animate={{ y: 0, opacity: 1 }}
             className="text-center mb-12"
           >
-            <h1 className="text-6xl font-black text-primary mb-4">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-primary mb-4">
               Choose Your Adventure! 🎯
             </h1>
-            <p className="text-2xl text-muted-foreground font-bold">
+            <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground font-bold">
               Pick a course and start learning!
             </p>
           </motion.div>
